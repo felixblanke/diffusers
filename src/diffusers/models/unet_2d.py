@@ -303,7 +303,7 @@ class UNet2DModel(ModelMixin, ConfigMixin):
         sample = self.conv_in(sample)
 
         # 3. down
-        down_block_res_samples = (sample,)
+        down_block_res_samples = (sample, sample,)
         for downsample_block in self.down_blocks:
             if hasattr(downsample_block, "skip_conv"):
                 sample, res_samples, skip_sample = downsample_block(
@@ -323,10 +323,12 @@ class UNet2DModel(ModelMixin, ConfigMixin):
             res_samples = down_block_res_samples[-len(upsample_block.resnets) :]
             down_block_res_samples = down_block_res_samples[: -len(upsample_block.resnets)]
 
+            upsample_size = down_block_res_samples[-1].size(-1)
+
             if hasattr(upsample_block, "skip_conv"):
-                sample, skip_sample = upsample_block(sample, res_samples, emb, skip_sample)
+                sample, skip_sample = upsample_block(sample, res_samples, emb, skip_sample, upsample_size=upsample_size)
             else:
-                sample = upsample_block(sample, res_samples, emb)
+                sample = upsample_block(sample, res_samples, emb, upsample_size=upsample_size)
 
         # 6. post-process
         sample = self.conv_norm_out(sample)

@@ -2189,7 +2189,7 @@ class AttnUpBlock2D(nn.Module):
                 if self.upsample_type == "resnet":
                     hidden_states = upsampler(hidden_states, temb=temb, scale=scale)
                 else:
-                    hidden_states = upsampler(hidden_states, scale=scale)
+                    hidden_states = upsampler(hidden_states, scale=scale, output_size=upsample_size)
 
         return hidden_states
 
