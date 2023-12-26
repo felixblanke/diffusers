@@ -210,6 +210,8 @@ class DDPMScheduler(SchedulerMixin, ConfigMixin):
             # GeoDiff sigmoid schedule
             betas = torch.linspace(-6, 6, num_train_timesteps)
             self.betas = torch.sigmoid(betas) * (beta_end - beta_start) + beta_start
+        elif beta_schedule == "exp":
+            self.betas = betas_for_alpha_bar(num_train_timesteps, alpha_transform_type="exp")
         else:
             raise NotImplementedError(f"{beta_schedule} does is not implemented for {self.__class__}")
 
